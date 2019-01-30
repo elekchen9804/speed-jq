@@ -1,0 +1,31 @@
+{
+    "path": {
+        "design": {
+            "pathDir": "D:\\tool_test\\Theme_Design",
+            "fileType": [
+                "html",
+                "css",
+                "img"
+            ]
+        },
+        "program": {
+            "pathDir": "D:\\tool_test\\Theme_Program",
+            "fileType": [
+                "css",
+                "img"
+            ]
+        },
+        "site": {
+            "pathDir": "D:\\tool_test\\Theme_Site",
+            "fileType": [
+                "html",
+                "css",
+                "img"
+            ]
+        },
+        "modify": {
+            "pathDir": "D:\\tool_test\\Modify",
+            "fileType": []
+        }
+    }
+}

@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "fs-extra": "^7.0.1",
-    "jquery": "^3.3.1"
+    "jquery": "^3.3.1",
+    "readdirp": "^2.2.1"
   }
 }

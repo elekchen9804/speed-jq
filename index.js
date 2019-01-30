@@ -1,6 +1,6 @@
 const remote = require('electron').remote;
 const fs = remote.require('fs-extra');
-const path = remote.require('path');
+const readdirp = require('readdirp');
 const dialog = remote.dialog;
 
 $(function () {
@@ -30,14 +30,15 @@ $(function () {
 
             (async () => {
                 dataObj[`${pathName}Path`] = setting.path[pathName].pathDir = await getDirPath();
+                editFile(setting);
                 updateEleValue(dataObj);
             })();
         });
 
         // 儲存設定
-        $('.setting-save').on('click', async () => {
-            await editFile(setting);
-        });
+        // $('.setting-save').on('click', async () => {
+        //     await editFile(setting);
+        // });
     }
 });
 

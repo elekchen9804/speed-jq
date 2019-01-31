@@ -8,6 +8,17 @@
 <script>window.$ = window.jQuery = require("jquery");</script>
 
 <body>
+    <section id="work">
+        <input type="text" id="site-name">
+        <button type="button" id="start-work">
+            建立工作區
+        </button>
+        <button type="button" id="finish-work">
+            搬移修改檔案
+        </button>
+        <label for="">狀態：</label>
+        <span data-bind="workStatus"></span>
+    </section>
     <section id="setting">
         <div class="design row">
             <label for="">Theme_Design(靜態版)</label>
@@ -37,9 +48,6 @@
                 修改
             </button>
         </div>
-        <button type="button" class="setting-save btn">
-            儲存
-        </button>
     </section>
 
     <script src="index.js"></script>

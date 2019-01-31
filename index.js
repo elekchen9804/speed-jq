@@ -39,9 +39,15 @@ $(function () {
 
         // 建立工作區：複製靜態版至Ｍodify, 建立備份檔
         $('#start-work').on('click', function () {
-            let siteName = $('#site-name').val();
-            let designPath = path.join(elemList.designPath, siteName);
-            let modifySiteNamePath = path.join(elemList.modifyPath, siteName);
+            let userInput = getSiteInput();
+            // 沒輸入站名直接報錯跳出
+            if (!userInput.siteName) {
+                updateEleValue({ workStatus: '請輸入站名~' });
+                return;
+            }
+
+            let designPath = path.join(elemList.designPath, userInput.type, `${userInput.siteName}.${userInput.type}`);
+            let modifySiteNamePath = path.join(elemList.modifyPath, `${userInput.siteName}.${userInput.type}`);
             let modifySiteNameBackupPath = path.join(elemList.modifyPath, 'Backup');
 
             (async () => {
@@ -58,11 +64,18 @@ $(function () {
 
         // 搬移至版空：比對差異檔案，複製到三個地方
         $('#finish-work').on('click', function () {
-            let siteName = $('#site-name').val();
-            let designPath = path.join(elemList.designPath, siteName);
-            let sitePath = path.join(elemList.sitePath, siteName);
-            let programPath = path.join(elemList.programPath, siteName);
-            let modifySiteNamePath = path.join(elemList.modifyPath, siteName);
+            let userInput = getSiteInput();
+            // 沒輸入站名直接報錯跳出
+            if (!userInput.siteName) {
+                updateEleValue({ workStatus: '請輸入站名~' });
+                return;
+            }
+
+            let designPath = path.join(elemList.designPath, userInput.type, `${userInput.siteName}.${userInput.type}`);
+            // 靜態實體站：路徑待確認？
+            let sitePath = path.join(elemList.sitePath, userInput.type, `${userInput.siteName}.${userInput.type}`);
+            let programPath = path.join(elemList.programPath, `Web.${userInput.type}`, `${userInput.siteName}.${userInput.type}`);
+            let modifySiteNamePath = path.join(elemList.modifyPath, `${userInput.siteName}.${userInput.type}`);
             let modifySiteNameBackupPath = path.join(elemList.modifyPath, 'Backup');
             let modifySiteNameDistPath = path.join(elemList.modifyPath, 'Dist');
 
@@ -89,9 +102,17 @@ $(function () {
 
 // Functions
 
-// 取得設定
+// 取得路徑設定
 function getSetting() {
     return JSON.parse(fs.readFileSync('./setting.json').toString());
+}
+
+// 取得路徑設定
+function getSiteInput() {
+    return {
+        siteName: $('#site-name').val(),
+        type: 'Portal'
+    }
 }
 
 // Update Element value

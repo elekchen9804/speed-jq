@@ -25,10 +25,13 @@ $(function () {
         // 更新View
         updateEleValue(elemList);
 
+        // 初始化tooltip
+        $('[data-toggle="tooltip"]').tooltip()
+
         // 取得路徑設定值
         $('.modify-btn').on('click', function () {
             let dataObj = {};
-            let pathName = $(this).closest('div.row').attr("class").split(' ')[0];
+            let pathName = $(this).closest('.row-item').attr("class").split(' ')[0];
 
             (async () => {
                 dataObj[`${pathName}Path`] = setting.path[pathName].pathDir = await getDirPath();
@@ -42,7 +45,7 @@ $(function () {
             let userInput = getSiteInput();
             // 沒輸入站名直接報錯跳出
             if (!userInput.siteName) {
-                updateEleValue({ workStatus: '請輸入站名~' });
+                updateEleValue({ workStatus: '請輸入站名!' });
                 return;
             }
 

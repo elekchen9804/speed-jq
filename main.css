@@ -1,0 +1,23 @@
+body {
+    background-color: #f0f6fd;
+}
+.app-wrapper {
+    padding: 2rem;
+}
+
+.navbar .nav a {
+    color:#fff;
+}
+
+.navbar .nav a.active {
+    background: rgba(129, 129, 130, .3);
+    border-radius: 5px;
+}
+
+#setting  .list-group-item > span {
+    text-decoration: underline;
+}
+
+#setting  .list-group-item > button {
+   float: right;
+}

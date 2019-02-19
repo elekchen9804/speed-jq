@@ -3,64 +3,99 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Speed up </title>
+    <title>SPEED</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="vender/font/5.7.2/font-awesome.min.css">
+    <link rel="stylesheet" href="main.css">
 </head>
-<script>window.$ = window.jQuery = require("jquery");</script>
 
 <body>
-    <section id="work">
-        <label>
-            輸入站代號
-            <input type="text" id="site-name" placeholder="例：AN001-01">
-        </label>
-        <!-- <label>
-            <input type="radio" class="option-input radio" name="example" />
-            Radio option
-        </label>
-        <label>
-            <input type="radio" class="option-input radio" name="example" />
-            Radio option
-        </label> -->
-        <button type="button" id="start-work">
-            建立工作區
-        </button>
-        <button type="button" id="finish-work">
-            搬移修改檔案
-        </button>
-        <label for="">狀態：</label>
-        <span data-bind="workStatus"></span>
-    </section>
-    <section id="setting">
-        <div class="design row">
-            <label for="">Theme_Design(靜態版)</label>
-            <span data-bind="designPath"></span>
-            <button type="button" class="modify-btn">
-                修改
-            </button>
+    <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="#"><i class="fas fa-rocket"></i> SPEED</a>
+        <div class="nav" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" id="nav-work-tab" data-toggle="tab" href="#nav-work" role="tab"
+                aria-controls="nav-work" aria-selected="true">工作區</a>
+            <a class="nav-item nav-link" id="nav-setting-tab" data-toggle="tab" href="#nav-setting" role="tab"
+                aria-controls="nav-setting" aria-selected="false">
+                <i class="fas fa-cogs" data-toggle="tooltip" data-placement="bottom" title="設定"></i>
+            </a>
         </div>
-        <div class="site row">
-            <label for="">Theme_Site(網站)</label>
-            <span data-bind="sitePath"></span>
-            <button type="button" class="modify-btn">
-                修改
-            </button>
+    </nav>
+    <div class="app-wrapper">
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-work" role="tabpanel" aria-labelledby="nav-work-tab">
+                <section id="work">
+                    <form>
+                        <div class="form-group">
+                            <label for="">輸入站代號 : </label>
+                            <input type="text" id="site-name" class="form-control form-control-lg"
+                                placeholder="例：AN001-01">
+                            <small class="form-text text-muted">* 目前只允許Portal的搬移</small>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" id="start-work" class="btn btn-primary">
+                                建立工作區
+                            </button>
+                            <button type="button" id="finish-work" class="btn btn-primary">
+                                搬移修改檔案
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <div class="alert alert-primary" role="alert">
+                                <strong>狀態：</strong><span data-bind="workStatus"></span>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+            </div>
+            <div class="tab-pane fade" id="nav-setting" role="tabpanel" aria-labelledby="nav-setting-tab">
+                <section id="setting">
+                    <h4>各區根目錄設定</h4>
+                    <ul class="list-group">
+                        <li class="list-group-item design row-item">
+                            <label for=""><strong>Theme_Design(靜態版) : </strong></label>
+                            <span data-bind="designPath"></span>
+                            <button type="button" class="modify-btn btn btn-outline-dark" data-toggle="tooltip"
+                                data-placement="left" title="編輯">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                        </li>
+                        <li class="list-group-item site row-item">
+                            <label for=""><strong>Theme_Site(網站) : </strong></label>
+                            <span data-bind="sitePath"></span>
+                            <button type="button" class="modify-btn btn btn-outline-dark" data-toggle="tooltip"
+                                data-placement="left" title="編輯">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                        </li>
+                        <li class="list-group-item program row-item">
+                            <label for=""><strong>Theme_Program(合作版控) : </strong></label>
+                            <span data-bind="programPath"></span>
+                            <button type="button" class="modify-btn btn btn-outline-dark" data-toggle="tooltip"
+                                data-placement="left" title="編輯">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                        </li>
+                        <li class="list-group-item modify row-item">
+                            <label for=""><strong>Modify(工作區) : </strong></label>
+                            <span data-bind="modifyPath"></span>
+                            <button type="button" class="modify-btn btn btn-outline-dark" data-toggle="tooltip"
+                                data-placement="left" title="編輯">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </section>
+            </div>
         </div>
-        <div class="program row">
-            <label for="">Theme_Program(合作版控)</label>
-            <span data-bind="programPath"></span>
-            <button type="button" class="modify-btn">
-                修改
-            </button>
-        </div>
-        <div class="modify row">
-            <label for="">Modify(工作區)</label>
-            <span data-bind="modifyPath"></span>
-            <button type="button" class="modify-btn">
-                修改
-            </button>
-        </div>
-    </section>
-
+    </div>
+    <script>
+        // Require jQuery
+        window.$ = window.jQuery = require("jquery");
+        // Require bootstrap related js
+        window.popper = require("popper.js");
+        require("bootstrap");
+    </script>
     <script src="index.js"></script>
 </body>
 

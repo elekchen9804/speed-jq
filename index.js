@@ -50,8 +50,10 @@ $(function () {
             }
 
             let designPath = path.join(elemList.designPath, userInput.type, `${userInput.siteName}.${userInput.type}`);
+            let designCommonPath = path.join(elemList.designPath, userInput.type, '_Common');
             let modifySiteNamePath = path.join(elemList.modifyPath, `${userInput.siteName}.${userInput.type}`);
             let modifySiteNameBackupPath = path.join(elemList.modifyPath, 'Backup');
+            let modifySiteNameCommonPath = path.join(elemList.modifyPath, '_Common');
 
             (async () => {
                 updateEleValue({ workStatus: '努力搬運中...' });
@@ -59,6 +61,8 @@ $(function () {
                 await clearDir(elemList.modifyPath);
                 // 複製靜態站到工作區
                 await copyFile(designPath, modifySiteNamePath);
+                // 複製靜態站_Common到工作區
+                await copyFile(designCommonPath, modifySiteNameCommonPath);
                 // 產生備份檔
                 await copyFile(designPath, modifySiteNameBackupPath);
                 updateEleValue({ workStatus: '完成搬運與備份！' });

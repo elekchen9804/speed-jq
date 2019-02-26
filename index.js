@@ -1,5 +1,5 @@
 const remote = require('electron').remote;
-const fs = remote.require('fs-extra');
+const fs = require('fs-extra');
 const readdirp = require('readdirp');
 const path = require('path');
 const crypto = require('crypto');

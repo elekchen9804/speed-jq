@@ -6,9 +6,8 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron . --debug",
-    "build_mac": "electron-packager . SPEED --platform=darwin --arch=x64 --electron-version=4.0.2 --asar --ignore=node_modules/electron-* ",
-    "build_win32": "electron-packager . SPEED --platform=win32 --arch=x64 --electron-version=4.0.2 --asar --ignore=node_modules/electron-* ",
-    "build_linux": "electron-packager . SPEED --platform=linux --arch=x64 --electron-version=4.0.2 --asar --ignore=node_modules/electron-* "
+    "build_mac": "electron-builder build -m zip",
+    "build_win": "electron-builder build -w zip"
   },
   "repository": {
     "type": "git",
@@ -23,7 +22,7 @@
   "devDependencies": {
     "devtron": "^1.4.0",
     "electron": "^4.0.2",
-    "electron-packager": "^13.0.1"
+    "electron-builder": "^20.38.5"
   },
   "dependencies": {
     "bootstrap": "^4.3.1",

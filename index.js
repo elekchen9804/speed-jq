@@ -89,7 +89,6 @@ $(function () {
             }
 
             let designPath = path.join(elemList.designPath, userInput.type, `${userInput.siteName}.${userInput.type}`);
-            // 靜態實體站：路徑待確認？
             let sitePath = path.join(elemList.sitePath, userInput.type, `${userInput.siteName}.${userInput.type}`);
             let programPath = path.join(elemList.programPath, `Web.${userInput.type}`, `${userInput.siteName}.${userInput.type}`);
             let modifySiteNamePath = path.join(elemList.modifyPath, `${userInput.siteName}.${userInput.type}`);
@@ -111,6 +110,10 @@ $(function () {
                 let allModifyFileList = await listAllFilePath(modifySiteNamePath);
                 // 取得異動檔案清單
                 const resultFileList = listModifyFilePath(allModifyFileList, modifySiteNamePath, modifySiteNameBackupPath);
+                if (resultFileList.length === 0) {
+                    updateEleValue({ workStatus: `<i class="fas fa-exclamation-triangle"></i> ${targetSiteName} 沒有異動檔案！` });
+                    return;
+                }
                 // 產出異動檔案包
                 await exportDist(resultFileList, modifySiteNamePath, modifySiteNameDistPath);
                 // Dist to design 
@@ -118,7 +121,14 @@ $(function () {
                 // Dist to site
                 await copyFile(modifySiteNameDistPath, sitePath);
                 // Dist to program (only css and img)
-                await copyFile(path.join(modifySiteNameDistPath, 'Content'), path.join(programPath, 'Content'));
+
+                try {
+                    fs.accessSync(path.join(modifySiteNameDistPath, 'Content'));
+                    await copyFile(path.join(modifySiteNameDistPath, 'Content'), path.join(programPath, 'Content'));
+                } catch (err) {
+                    console.log(err);
+                }
+
                 // 顯示檔案清單
                 await showModifyList(resultFileList);
                 updateEleValue({ workStatus: `<i class="far fa-check-circle"></i> ${targetSiteName} 檔案已成功搬至版控！` });
@@ -340,7 +350,6 @@ function exportDist(pathArray, sourcePath, distPath) {
 
             fs.copySync(resultFilePath, distFilePath);
         }
-
         resolve();
     })
 }

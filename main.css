@@ -1,6 +1,11 @@
 body {
     background-color: #f0f6fd;
 }
+
+ul {
+    margin: 1rem 0;
+}
+
 .app-wrapper {
     padding: 2rem;
 }
@@ -14,10 +19,10 @@ body {
     border-radius: 5px;
 }
 
-#setting  .list-group-item > span {
+#setting .list-group-item > span {
     text-decoration: underline;
 }
 
-#setting  .list-group-item > button {
+#setting .list-group-item > button {
    float: right;
 }

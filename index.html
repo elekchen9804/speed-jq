@@ -19,6 +19,10 @@
                 aria-controls="nav-setting" aria-selected="false">
                 <i class="fas fa-cogs" data-toggle="tooltip" data-placement="bottom" title="設定"></i>
             </a>
+            <a class="nav-item nav-link" id="nav-setting-tab" data-toggle="tab" href="#nav-log" role="tab"
+                aria-controls="nav-log" aria-selected="false">
+                <i class="fas fa-tasks" data-toggle="tooltip" data-placement="bottom" title="版本紀錄"></i>
+            </a>
         </div>
     </nav>
     <div class="app-wrapper">
@@ -30,19 +34,39 @@
                             <label for="">輸入站代號 : </label>
                             <input type="text" id="site-name" class="form-control form-control-lg"
                                 placeholder="例：AN001-01">
-                            <small class="form-text text-muted">* 目前只允許Portal的搬移</small>
+                        </div>
+                        <div class="form-group">
+                            <div id="theme-type" class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <label class="btn btn-outline-secondary active">
+                                    <input type="radio" name="types" id="theme-portal" value="Portal" autocomplete="off"
+                                        checked data-toggle="tooltip" data-placement="bottom" title="電腦版">
+                                    <i class="fas fa-desktop"></i> Portal
+                                </label>
+                                <label class="btn btn-outline-secondary">
+                                    <input type="radio" name="types" id="theme-mobile" value="Mobile" autocomplete="off"
+                                        data-toggle="tooltip" data-placement="bottom" title="手機版">
+                                    <i class="fas fa-mobile-alt"></i> Mobile
+                                </label>
+                            </div>
                         </div>
                         <div class="form-group">
                             <button type="button" id="start-work" class="btn btn-primary">
-                                建立工作區
+                                <i class="fas fa-download"></i> 建立工作區
                             </button>
                             <button type="button" id="finish-work" class="btn btn-primary">
-                                搬移修改檔案
+                                <i class="fas fa-upload"></i> 搬移修改檔案
                             </button>
                         </div>
                         <div class="form-group">
                             <div class="alert alert-primary" role="alert">
                                 <strong>狀態：</strong><span data-bind="workStatus"></span>
+                            </div>
+                        </div>
+                        <div class="form-group modify-list">
+                            <div class="alert alert-secondary" role="alert">
+                                <strong>異動檔案清單：</strong>
+                                <br />
+                                <div data-bind="modifyList"></div>
                             </div>
                         </div>
                     </form>
@@ -85,17 +109,37 @@
                             </button>
                         </li>
                     </ul>
+                </section>
+            </div>
+            <div class="tab-pane fade" id="nav-log" role="tabpanel" aria-labelledby="nav-log-tab">
+                <section id="log-list">
+                    <h4>目前版本</h4>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <strong>1.0.1</strong>
+                            <a class="badge badge-success" data-toggle="collapse" href="#collapseLog" role="button"
+                                aria-expanded="false" aria-controls="collapseLog">
+                                查看新功能
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="collapse" id="collapseLog">
+                        <div class="card card-body">
+                            <ul>
+                                <li>可以選擇Portal/Mobile</li>
+                                <li>輸入框加上格式檢查(是否為空、格式錯誤、不存在資料夾)</li>
+                                <li>錯誤訊息更新(格式錯誤、不存在資料夾等)</li>
+                            </ul>
+                        </div>
+                    </div>
                     <br />
                     <h4>即將推出</h4>
                     <ul class="list-group">
                         <li class="list-group-item">
+                            列出異動檔案清單
+                        </li>
+                        <li class="list-group-item">
                             設定路徑完後無需重啟即可生效
-                        </li>
-                        <li class="list-group-item">
-                            輸入框加上格式檢查
-                        </li>
-                        <li class="list-group-item">
-                            可以選擇Portal/Mobile
                         </li>
                     </ul>
                 </section>

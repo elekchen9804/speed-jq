@@ -43,9 +43,9 @@ $(function () {
         // 建立工作區：複製靜態版至Ｍodify, 建立備份檔
         $('#start-work').on('click', function () {
             let userInput = getSiteInput();
-            // 沒輸入站名直接報錯跳出
-            if (!userInput.siteName) {
-                updateEleValue({ workStatus: '請輸入站名!' });
+
+            // 格式檢查
+            if (hasInputError(userInput)) {
                 return;
             }
 
@@ -56,7 +56,17 @@ $(function () {
             let modifySiteNameCommonPath = path.join(elemList.modifyPath, '_Common');
 
             (async () => {
-                updateEleValue({ workStatus: '努力搬運中...' });
+                const targetSiteName = `${userInput.siteName}.${userInput.type}`;
+                // 目標資夾是否存在
+                try {
+                    await dirExist(designPath);
+                } catch (err) {
+                    updateEleValue({ workStatus: `<i class="fas fa-exclamation-triangle"></i> ${targetSiteName} 不存在！` });
+                    return;
+                }
+                updateEleValue({ workStatus: `<i class="fas fa-spinner fa-spin"></i> ${targetSiteName} 努力搬運中...` });
+                // 清空檔案清單
+                updateEleValue({ modifyList: '' });
                 // 清空工作區
                 await clearDir(elemList.modifyPath);
                 // 複製靜態站到工作區
@@ -65,17 +75,17 @@ $(function () {
                 await copyFile(designCommonPath, modifySiteNameCommonPath);
                 // 產生備份檔
                 await copyFile(designPath, modifySiteNameBackupPath);
-                updateEleValue({ workStatus: '完成搬運與備份！' });
+                updateEleValue({ workStatus: `<i class="far fa-check-circle"></i> ${targetSiteName} 完成搬運與備份！` });
             })()
         });
 
         // 搬移至版空：比對差異檔案，複製到三個地方
         $('#finish-work').on('click', function () {
             let userInput = getSiteInput();
-            // 沒輸入站名直接報錯跳出
-            if (!userInput.siteName) {
-                updateEleValue({ workStatus: '請輸入站名~' });
-                return;
+
+            // 格式檢查
+            if (hasInputError(userInput)) {
+                return
             }
 
             let designPath = path.join(elemList.designPath, userInput.type, `${userInput.siteName}.${userInput.type}`);
@@ -87,7 +97,16 @@ $(function () {
             let modifySiteNameDistPath = path.join(elemList.modifyPath, 'Dist');
 
             (async () => {
-                updateEleValue({ workStatus: '複製檔案至版控中...' });
+                const targetSiteName = `${userInput.siteName}.${userInput.type}`;
+
+                try {
+                    await dirExist(designPath);
+                } catch (err) {
+                    updateEleValue({ workStatus: `<i class="fas fa-exclamation-triangle"></i> ${targetSiteName} 不存在！` });
+                    return;
+                }
+
+                updateEleValue({ workStatus: `<i class="fas fa-spinner fa-spin"></i> ${targetSiteName} 複製檔案至版控中...` });
                 // 取得所有檔案清單
                 let allModifyFileList = await listAllFilePath(modifySiteNamePath);
                 // 取得異動檔案清單
@@ -100,8 +119,9 @@ $(function () {
                 await copyFile(modifySiteNameDistPath, sitePath);
                 // Dist to program (only css and img)
                 await copyFile(path.join(modifySiteNameDistPath, 'Content'), path.join(programPath, 'Content'));
-
-                updateEleValue({ workStatus: '檔案已成功搬至版控！' });
+                // 顯示檔案清單
+                await showModifyList(resultFileList);
+                updateEleValue({ workStatus: `<i class="far fa-check-circle"></i> ${targetSiteName} 檔案已成功搬至版控！` });
             })();
         });
     }
@@ -118,7 +138,24 @@ function getSetting() {
 function getSiteInput() {
     return {
         siteName: $('#site-name').val(),
-        type: 'Portal'
+        type: $('#theme-type input[name="types"]:checked').val()
+    }
+}
+
+// Check Input format
+function hasInputError(value) {
+    let reg = /[A-Z]{2}0[0-9]{2}-[0-9]{2}/g;
+
+    // Empty?
+    if (!value.siteName) {
+        updateEleValue({ workStatus: '<i class="fas fa-exclamation-triangle"></i> 請輸入站名~' });
+        return true;
+    }
+
+    // match format check?
+    if (value.siteName.match(reg) == null) {
+        updateEleValue({ workStatus: '<i class="fas fa-exclamation-triangle"></i> 格式有誤, 請重新輸入~' });
+        return true;
     }
 }
 
@@ -129,6 +166,31 @@ function updateEleValue(obj) {
             $(`[data-bind=${key}]`).html(obj[key]);
         }
     }
+}
+
+// 顯示修改檔案清單
+function showModifyList(list) {
+    let listContent = [],
+        finalElement = '';
+
+    list.forEach(element => {
+        listContent.push(`<li>${element}</li>`);
+    });
+
+    finalElement = listContent.join('');
+    updateEleValue({ modifyList: `<ul>${finalElement}</ul>` });
+}
+
+// 檢查 Dir 是否存在
+function dirExist(dir) {
+    return new Promise((resolve, reject) => {
+        fs.stat(dir, err => {
+            if (err) {
+                reject();
+            }
+            resolve();
+        });
+    })
 }
 
 // Get Directory path
@@ -152,11 +214,9 @@ function readFile(filepath) {
                 alert("An error ocurred reading the file :" + err.message);
                 return;
             }
-
             resolve(data);
         });
     })
-
 }
 
 // 刪除 Dir
@@ -184,7 +244,7 @@ function copyFile(source, target) {
     })
 }
 
-// 修改Webconfig站名字串
+// Edit files
 function editFile(data) {
     return new Promise((resolve, reject) => {
         let content = JSON.stringify(data);

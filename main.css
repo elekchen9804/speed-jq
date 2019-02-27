@@ -26,3 +26,7 @@ ul {
 #setting .list-group-item > button {
    float: right;
 }
+
+#theme-type label {
+    cursor: pointer;
+}

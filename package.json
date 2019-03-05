@@ -1,6 +1,6 @@
 {
   "name": "speed-jq",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A cross platform desktop app for speed up daily work for design team",
   "main": "main.js",
   "scripts": {

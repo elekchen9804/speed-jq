@@ -18,7 +18,7 @@ $(function () {
         let elemList = {
             designPath: setting.path.design.pathDir,
             programPath: setting.path.program.pathDir,
-            sitePath: setting.path.site.pathDir,
+            // sitePath: setting.path.site.pathDir,
             modifyPath: setting.path.modify.pathDir
         };
 
@@ -89,7 +89,7 @@ $(function () {
             }
 
             let designPath = path.join(elemList.designPath, userInput.type, `${userInput.siteName}.${userInput.type}`);
-            let sitePath = path.join(elemList.sitePath, userInput.type, `${userInput.siteName}.${userInput.type}`);
+            // let sitePath = path.join(elemList.sitePath, userInput.type, `${userInput.siteName}.${userInput.type}`);
             let programPath = path.join(elemList.programPath, `Web.${userInput.type}`, `${userInput.siteName}.${userInput.type}`);
             let modifySiteNamePath = path.join(elemList.modifyPath, `${userInput.siteName}.${userInput.type}`);
             let modifySiteNameBackupPath = path.join(elemList.modifyPath, 'Backup');
@@ -118,10 +118,9 @@ $(function () {
                 await exportDist(resultFileList, modifySiteNamePath, modifySiteNameDistPath);
                 // Dist to design 
                 await copyFile(modifySiteNameDistPath, designPath);
-                // Dist to site
-                await copyFile(modifySiteNameDistPath, sitePath);
+                // Dist to site (removed)
+                // await copyFile(modifySiteNameDistPath, sitePath);
                 // Dist to program (only css and img)
-
                 try {
                     fs.accessSync(path.join(modifySiteNameDistPath, 'Content'));
                     await copyFile(path.join(modifySiteNameDistPath, 'Content'), path.join(programPath, 'Content'));

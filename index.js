@@ -156,16 +156,11 @@ $(function () {
                 let programSiteList = await listAllFilePath(programRootPath, true);
                 let designSiteList = await listAllFilePath(designRootPath, true);
 
-                // 兩處版控資料夾是否一致
-                if (programSiteList.length === designSiteList.length) {
-                    // 清空工作區
-                    await clearDir(elemList.modifyPath);
-                    // 建立站台空資料夾
-                    await createDir(modifyRootPath, designSiteList);
-                    updateEleValue({ imgMoveStatus: `<i class="fas fa-check-circle"></i> "${casinoType}"資料夾已完成!` });
-                } else {
-                    updateEleValue({ imgMoveStatus: `<i class="fas fa-exclamation-triangle"></i> 靜態與動態版站台數量不一致` });
-                }
+                // 清空工作區
+                await clearDir(elemList.modifyPath);
+                // 建立站台空資料夾
+                await createDir(modifyRootPath, programSiteList);
+                updateEleValue({ imgMoveStatus: `<i class="fas fa-check-circle"></i> "${casinoType}"資料夾已完成!` });
             })();
         });
 

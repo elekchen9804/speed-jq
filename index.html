@@ -14,7 +14,9 @@
         <a class="navbar-brand" href="#"><i class="fas fa-rocket"></i> SPEED</a>
         <div class="nav" id="nav-tab" role="tablist">
             <a class="nav-item nav-link active" id="nav-work-tab" data-toggle="tab" href="#nav-work" role="tab"
-                aria-controls="nav-work" aria-selected="true">工作區</a>
+                aria-controls="nav-work" aria-selected="true">站台修改</a>
+            <a class="nav-item nav-link" id="nav-img-tab" data-toggle="tab" href="#nav-img" role="tab"
+                aria-controls="nav-img" aria-selected="true">圖片批次</a>
             <a class="nav-item nav-link" id="nav-setting-tab" data-toggle="tab" href="#nav-setting" role="tab"
                 aria-controls="nav-setting" aria-selected="false">
                 <i class="fas fa-cogs" data-toggle="tooltip" data-placement="bottom" title="設定"></i>
@@ -29,6 +31,8 @@
         <div class="tab-content" id="nav-tabContent">
             <div class="tab-pane fade show active" id="nav-work" role="tabpanel" aria-labelledby="nav-work-tab">
                 <section id="work">
+                    <h4>站台修改</h4>
+                    <hr>
                     <form>
                         <div class="form-group">
                             <label for="">輸入站代號 : </label>
@@ -38,12 +42,12 @@
                         <div class="form-group">
                             <div id="theme-type" class="btn-group btn-group-toggle" data-toggle="buttons">
                                 <label class="btn btn-outline-secondary active">
-                                    <input type="radio" name="types" id="theme-portal" value="Portal" autocomplete="off"
-                                        checked>
+                                    <input type="radio" name="theme-types" id="theme-portal" value="Portal"
+                                        autocomplete="off" checked>
                                     <i class="fas fa-desktop"></i> Portal
                                 </label>
                                 <label class="btn btn-outline-secondary">
-                                    <input type="radio" name="types" id="theme-mobile" value="Mobile"
+                                    <input type="radio" name="theme-types" id="theme-mobile" value="Mobile"
                                         autocomplete="off">
                                     <i class="fas fa-mobile-alt"></i> Mobile
                                 </label>
@@ -72,9 +76,73 @@
                     </form>
                 </section>
             </div>
+            <div class="tab-pane fade show" id="nav-img" role="tabpanel" aria-labelledby="nav-img-tab">
+                <section id="img-move">
+                    <h4>娛樂城圖片批次搬運</h4>
+                    <hr>
+                    <form>
+                        <div class="form-group">
+                            <label for="">選擇娛樂廳類型 : <span class="text-muted">(僅供電腦版)</span></label><br>
+                            <div id="casino-type" class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <label class="btn btn-outline-secondary active">
+                                    <input type="radio" name="casino-types" id="casino-slot" value="Game"
+                                        autocomplete="off" checked>
+                                    電子
+                                </label>
+                                <label class="btn btn-outline-secondary">
+                                    <input type="radio" name="casino-types" id="casino-live" value="Live"
+                                        autocomplete="off">
+                                    真人
+                                </label>
+                                <label class="btn btn-outline-secondary">
+                                    <input type="radio" name="casino-types" id="casino-live" value="Sport"
+                                        autocomplete="off">
+                                    體育
+                                </label>
+                                <label class="btn btn-outline-secondary">
+                                    <input type="radio" name="casino-types" id="casino-live" value="Lottery"
+                                        autocomplete="off">
+                                    彩票
+                                </label>
+                                <label class="btn btn-outline-secondary">
+                                    <input type="radio" name="casino-types" id="casino-board" value="Board"
+                                        autocomplete="off">
+                                    棋牌
+                                </label>
+                                <label class="btn btn-outline-secondary">
+                                    <input type="radio" name="casino-types" id="casino-live" value="Esport"
+                                        autocomplete="off">
+                                    電競
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" id="start-img-move" class="btn btn-primary">
+                                <i class="fas fa-download"></i> 建立空資料夾
+                            </button>
+                            <button type="button" id="finish-img-move" class="btn btn-primary">
+                                <i class="fas fa-upload"></i> 搬移圖片
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <div class="alert alert-primary" role="alert">
+                                <strong>狀態：</strong><span data-bind="imgMoveStatus"></span>
+                            </div>
+                        </div>
+                        <!-- <div class="form-group modify-list">
+                            <div class="alert alert-secondary" role="alert">
+                                <strong>異動檔案清單：</strong>
+                                <br />
+                                <div data-bind="imgMoveModifyList"></div>
+                            </div>
+                        </div> -->
+                    </form>
+                </section>
+            </div>
             <div class="tab-pane fade" id="nav-setting" role="tabpanel" aria-labelledby="nav-setting-tab">
                 <section id="setting">
                     <h4>各區根目錄設定</h4>
+                    <hr>
                     <ul class="list-group">
                         <li class="design list-group-item row-item">
                             <label for=""><strong>Theme_Design(靜態版) : </strong></label>
@@ -113,10 +181,12 @@
             </div>
             <div class="tab-pane fade" id="nav-log" role="tabpanel" aria-labelledby="nav-log-tab">
                 <section id="log-list">
-                    <h4>目前版本</h4>
+                    <h4>版本紀錄</h4>
+                    <hr>
+                    <h5>目前版本</h5>
                     <ul class="list-group">
                         <li class="list-group-item">
-                            <strong>1.0.2</strong>
+                            <strong>1.0.3</strong>
                             <a class="badge badge-success" data-toggle="collapse" href="#collapseLog" role="button"
                                 aria-expanded="false" aria-controls="collapseLog">
                                 查看新功能
@@ -126,21 +196,24 @@
                     <div class="collapse" id="collapseLog">
                         <div class="card card-body">
                             <ul>
-                                <li>取消搬移檔案到 Theme_Site(網站) 資料夾</li>
+                                <li>新增功能 : 娛樂城圖片批次搬運</li>
                             </ul>
                         </div>
                     </div>
                     <br />
-                    <h4>
+                    <h5>
                         歷史版本
                         <a class="btn btn-link" data-toggle="collapse" href="#collapseHistoryLog" role="button"
                             aria-expanded="false" aria-controls="collapseLog">
                             查看
                         </a>
-
-                    </h4>
+                    </h5>
                     <div class="collapse" id="collapseHistoryLog">
                         <div class="card card-body">
+                            <strong>1.0.2</strong>
+                            <ul>
+                                <li>取消搬移檔案到 Theme_Site(網站) 資料夾</li>
+                            </ul>
                             <strong>1.0.1</strong>
                             <ul>
                                 <li>可以選擇Portal/Mobile</li>
@@ -151,7 +224,7 @@
                         </div>
                     </div>
                     <br />
-                    <h4>即將推出</h4>
+                    <h5>即將推出</h5>
                     <ul class="list-group">
                         <li class="list-group-item">
                             設定路徑完後無需重啟即可生效

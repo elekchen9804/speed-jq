@@ -27,6 +27,7 @@ ul {
    float: right;
 }
 
-#theme-type label {
+#theme-type label,
+#casino-type label {
     cursor: pointer;
 }

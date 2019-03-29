@@ -28,6 +28,7 @@ $(function () {
         // 初始化tooltip
         $('[data-toggle="tooltip"]').tooltip()
 
+        // #region 路徑設定
         // 取得路徑設定值
         $('.modify-btn').on('click', function () {
             let dataObj = {};
@@ -39,7 +40,9 @@ $(function () {
                 updateEleValue(dataObj);
             })();
         });
+        // #endregion 路徑設定
 
+        // #region 修改監控
         // 建立工作區：複製靜態版至Ｍodify, 建立備份檔
         $('#start-work').on('click', function () {
             let userInput = getSiteInput();
@@ -109,7 +112,7 @@ $(function () {
                 // 取得所有檔案清單
                 let allModifyFileList = await listAllFilePath(modifySiteNamePath);
                 // 取得異動檔案清單
-                const resultFileList = listModifyFilePath(allModifyFileList, modifySiteNamePath, modifySiteNameBackupPath);
+                let resultFileList = listModifyFilePath(allModifyFileList, modifySiteNamePath, modifySiteNameBackupPath);
                 if (resultFileList.length === 0) {
                     updateEleValue({ workStatus: `<i class="fas fa-exclamation-triangle"></i> ${targetSiteName} 沒有異動檔案！` });
                     return;
@@ -133,10 +136,78 @@ $(function () {
                 updateEleValue({ workStatus: `<i class="far fa-check-circle"></i> ${targetSiteName} 檔案已成功搬至版控！` });
             })();
         });
+        // #endregion 修改監控
+
+        // #region 圖片搬移
+
+        // 準備空資料夾
+        $('#start-img-move').on('click', function () {
+
+            let casinoType = getRadioInput('casino-types');
+
+            let programRootPath = path.join(elemList.programPath, 'Web.Portal');
+            let designRootPath = path.join(elemList.designPath, 'Portal');
+
+            let modifyRootPath = elemList.modifyPath;
+
+            (async () => {
+                updateEleValue({ imgMoveStatus: `<i class="fa-spinner fa-spin"></i> 準備環境中...` });
+                // 取得所有站台清單
+                let programSiteList = await listAllFilePath(programRootPath, true);
+                let designSiteList = await listAllFilePath(designRootPath, true);
+
+                // 兩處版控資料夾是否一致
+                if (programSiteList.length === designSiteList.length) {
+                    // 清空工作區
+                    await clearDir(elemList.modifyPath);
+                    // 建立站台空資料夾
+                    await createDir(modifyRootPath, designSiteList);
+                    updateEleValue({ imgMoveStatus: `<i class="fas fa-check-circle"></i> "${casinoType}"資料夾已完成!` });
+                } else {
+                    updateEleValue({ imgMoveStatus: `<i class="fas fa-exclamation-triangle"></i> 靜態與動態版站台數量不一致` });
+                }
+            })();
+        });
+
+        // 批次搬移圖片
+        $('#finish-img-move').on('click', function () {
+
+            let casinoType = getRadioInput('casino-types');
+            let targetCasinoPath = path.join('Content', 'Views', 'Lobby', casinoType);
+            let programRootPath = path.join(elemList.programPath, 'Web.Portal');
+            let designRootPath = path.join(elemList.designPath, 'Portal');
+            let modifyRootPath = elemList.modifyPath;
+
+            (async () => {
+                updateEleValue({ imgMoveStatus: `<i class="fa-spinner fa-spin"></i> 搬移圖片中...` });
+                // 取得所有站台清單
+                let allSiteList = await listAllFilePath(modifyRootPath, true);
+
+                // 複製圖片至目標
+                allSiteList.forEach(async l => {
+                    let srcPath = path.join(modifyRootPath, l);
+                    let destProgramPath = path.join(programRootPath, l, targetCasinoPath);
+                    let destDesignPath = path.join(designRootPath, l, targetCasinoPath);
+
+                    await copyFile(srcPath, destProgramPath);
+                    await copyFile(srcPath, destDesignPath);
+                });
+
+                updateEleValue({ imgMoveStatus: `<i class="fas fa-check-circle"></i> "${casinoType}"圖片已搬移至靜態與動態版控` });
+
+            })();
+        });
+        // #endregion 圖片搬移
     }
 });
 
 // Functions
+
+// 比較兩個陣列是否相等
+// 註 : 只檢查 string[]
+function arraysEqual(a1, a2) {
+    return JSON.stringify(a1) == JSON.stringify(a2);
+}
 
 // 取得路徑設定
 function getSetting() {
@@ -147,8 +218,13 @@ function getSetting() {
 function getSiteInput() {
     return {
         siteName: $('#site-name').val(),
-        type: $('#theme-type input[name="types"]:checked').val()
+        type: getRadioInput('theme-types')
     }
+}
+
+// 取得radio box value
+function getRadioInput(name) {
+    return $(`input[name="${name}"]:checked`).val()
 }
 
 // Check Input format
@@ -266,6 +342,17 @@ function editFile(data) {
     })
 }
 
+// Create dir
+function createDir(modifyPath, list) {
+    return new Promise((resolve, reject) => {
+        list.forEach(l => {
+            let dirPath = path.join(modifyPath, l)
+            fs.mkdirSync(dirPath);
+        });
+        resolve();
+    })
+}
+
 // 取得hash值
 function getFileHash(filePath) {
     let buffer = fs.readFileSync(filePath);
@@ -273,23 +360,31 @@ function getFileHash(filePath) {
 }
 
 // 列出所有檔案
-function listAllFilePath(rootPath) {
+function listAllFilePath(rootPath, isSiteNameDirMode) {
     return new Promise((resolve, reject) => {
+
+        // 忽略清單
+        let ignoreFileList = ['!gulpfile.js',
+            '!package.json',
+            '!*.asax',
+            '!*.config',
+            '!App_Data',
+            '!CdnRedirect',
+            '!Cdn2Redirect',
+            '!node_modules',
+            '!fonts'];
+
+        // 參數設定
+        let options = {
+            root: rootPath,
+            entryType: isSiteNameDirMode ? 'directories' : 'files',
+            fileFilter: ignoreFileList,
+            depth: isSiteNameDirMode ? 0 : null
+        };
+
         // 所有檔案路徑
         let rawFilePaths = [];
-        readdirp({
-            root: rootPath,
-            entryType: 'files',
-            fileFilter: ['!gulpfile.js',
-                '!package.json',
-                '!*.asax',
-                '!*.config',
-                '!App_Data',
-                '!CdnRedirect',
-                '!Cdn2Redirect',
-                '!node_modules',
-                '!fonts']
-        },
+        readdirp(options,
             // This callback is executed everytime a file or directory is found inside the providen path
             fileInfo => {
                 // parentDir : directory in which entry was found (relative to given root)
@@ -298,10 +393,11 @@ function listAllFilePath(rootPath) {
                 // path : path to the file/directory (relative to given root)
                 // fullPath : full path to the file/directory found
                 // stat : built in stat object
-
-                rawFilePaths.push(
-                    fileInfo.path
-                );
+                if (fileInfo.path !== '_Common') {
+                    rawFilePaths.push(
+                        fileInfo.path
+                    );
+                }
             },
 
             // This callback is executed once 

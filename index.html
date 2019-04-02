@@ -17,6 +17,8 @@
                 aria-controls="nav-work" aria-selected="true">站台修改</a>
             <a class="nav-item nav-link" id="nav-img-tab" data-toggle="tab" href="#nav-img" role="tab"
                 aria-controls="nav-img" aria-selected="true">圖片批次</a>
+            <a class="nav-item nav-link" id="nav-css-tab" data-toggle="tab" href="#nav-css-move" role="tab"
+                aria-controls="nav-css-move" aria-selected="true">樣式同步</a>
             <a class="nav-item nav-link" id="nav-setting-tab" data-toggle="tab" href="#nav-setting" role="tab"
                 aria-controls="nav-setting" aria-selected="false">
                 <i class="fas fa-cogs" data-toggle="tooltip" data-placement="bottom" title="設定"></i>
@@ -139,6 +141,48 @@
                     </form>
                 </section>
             </div>
+            <div class="tab-pane fade show" id="nav-css-move" role="tabpanel" aria-labelledby="nav-css-move">
+                <section id="img-move">
+                    <h4>樣式同步</h4>
+                    <hr>
+                    <form>
+                        <div class="form-group">
+                            <label for="">將靜態版Lobby內的CSS覆蓋到動態版 <span class="text-muted">(電腦版)</span></label><br>
+                            <!-- <label for="">選擇CSS同步範圍 : <span class="text-muted">說明:
+                                    Lobby只會搬移娛樂城內的樣式</span></label><br>
+                            <div id="css-range" class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <label class="btn btn-outline-secondary active">
+                                    <input type="radio" name="css-range" id="css-range-lobby" value="Lobby"
+                                        autocomplete="off" checked>
+                                    Lobby
+                                </label>
+                                <label class="btn btn-outline-secondary">
+                                    <input type="radio" name="casino-types" id="css-range-all" value="All"
+                                        autocomplete="off">
+                                    全部
+                                </label>
+                            </div> -->
+                        </div>
+                        <div class="form-group">
+                            <button type="button" id="start-css-move" class="btn btn-primary">
+                                <i class="fas fa-download"></i> 搬移
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <div class="alert alert-primary" role="alert">
+                                <strong>狀態：</strong><span data-bind="cssMoveStatus"></span>
+                            </div>
+                        </div>
+                        <!-- <div class="form-group modify-list">
+                            <div class="alert alert-secondary" role="alert">
+                                <strong>搬運檔案清單：</strong>
+                                <br>
+                                <div data-bind="modifyCssList"></div>
+                            </div>
+                        </div> -->
+                    </form>
+                </section>
+            </div>
             <div class="tab-pane fade" id="nav-setting" role="tabpanel" aria-labelledby="nav-setting-tab">
                 <section id="setting">
                     <h4>各區根目錄設定</h4>
@@ -186,7 +230,7 @@
                     <h5>目前版本</h5>
                     <ul class="list-group">
                         <li class="list-group-item">
-                            <strong>1.0.3</strong>
+                            <strong>1.0.4</strong>
                             <a class="badge badge-success" data-toggle="collapse" href="#collapseLog" role="button"
                                 aria-expanded="false" aria-controls="collapseLog">
                                 查看新功能
@@ -196,7 +240,8 @@
                     <div class="collapse" id="collapseLog">
                         <div class="card card-body">
                             <ul>
-                                <li>新增功能 : 娛樂城圖片批次搬運</li>
+                                <li>新增SCSS檔案過濾功能 (Scss不會進Theme_Program)</li>
+                                <li>新增樣式同步 (將靜態版Lobby中的CSS搬至動態版)</li>
                             </ul>
                         </div>
                     </div>
@@ -210,6 +255,10 @@
                     </h5>
                     <div class="collapse" id="collapseHistoryLog">
                         <div class="card card-body">
+                            <strong>1.0.3</strong>
+                            <ul>
+                                <li>新增功能 : 娛樂城圖片批次搬運</li>
+                            </ul>
                             <strong>1.0.2</strong>
                             <ul>
                                 <li>取消搬移檔案到 Theme_Site(網站) 資料夾</li>

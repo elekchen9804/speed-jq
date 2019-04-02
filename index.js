@@ -97,6 +97,7 @@ $(function () {
             let modifySiteNamePath = path.join(elemList.modifyPath, `${userInput.siteName}.${userInput.type}`);
             let modifySiteNameBackupPath = path.join(elemList.modifyPath, 'Backup');
             let modifySiteNameDistPath = path.join(elemList.modifyPath, 'Dist');
+            let modifySiteNameDistPathWithoutScss = path.join(elemList.modifyPath, 'Dist_No_Scss');
 
             (async () => {
                 const targetSiteName = `${userInput.siteName}.${userInput.type}`;
@@ -117,22 +118,24 @@ $(function () {
                     updateEleValue({ workStatus: `<i class="fas fa-exclamation-triangle"></i> ${targetSiteName} 沒有異動檔案！` });
                     return;
                 }
+                // 取得不含SCSS異動清單
+                let resultFileListWithoutScss = filterScss(resultFileList);
+
                 // 產出異動檔案包
                 await exportDist(resultFileList, modifySiteNamePath, modifySiteNameDistPath);
-                // Dist to design 
+                // Dist to design  (scss/css/html/img)
                 await copyFile(modifySiteNameDistPath, designPath);
-                // Dist to site (removed)
-                // await copyFile(modifySiteNameDistPath, sitePath);
                 // Dist to program (only css and img)
                 try {
                     fs.accessSync(path.join(modifySiteNameDistPath, 'Content'));
-                    await copyFile(path.join(modifySiteNameDistPath, 'Content'), path.join(programPath, 'Content'));
+                    await exportDist(resultFileListWithoutScss, modifySiteNamePath, modifySiteNameDistPathWithoutScss);
+                    await copyFile(path.join(modifySiteNameDistPathWithoutScss, 'Content'), path.join(programPath, 'Content'));
                 } catch (err) {
                     console.log(err);
                 }
 
                 // 顯示檔案清單
-                await showModifyList(resultFileList);
+                await showModifyList(resultFileList, 'modifyList');
                 updateEleValue({ workStatus: `<i class="far fa-check-circle"></i> ${targetSiteName} 檔案已成功搬至版控！` });
             })();
         });
@@ -193,6 +196,42 @@ $(function () {
             })();
         });
         // #endregion 圖片搬移
+
+        // #region 樣式同步
+        // CSS搬移
+        $('#start-css-move').on('click', function () {
+            // let cssRange = getRadioInput('css-range');
+            let cssRange = 'Lobby';
+            let programRootPath = path.join(elemList.programPath, 'Web.Portal');
+            let designRootPath = path.join(elemList.designPath, 'Portal');
+
+            (async () => {
+                updateEleValue({ cssMoveStatus: `<i class="fa-spinner fa-spin"></i> 搬移CSS中...` });
+                // 取得所有站台CSS清單
+                let allSiteCssList = await listAllFilePath(designRootPath, false, true);
+
+                if (cssRange === 'Lobby') {
+                    let newCssList = allSiteCssList.filter(l => {
+                        return l.indexOf('Lobby') !== -1;
+                    });
+
+                    allSiteCssList = newCssList;
+                }
+
+                // 複製圖片至目標
+                allSiteCssList.forEach(async l => {
+                    let destProgramPath = path.join(programRootPath, l);
+                    let destDesignPath = path.join(designRootPath, l);
+
+                    await copyFile(destDesignPath, destProgramPath);
+                });
+
+                // 顯示檔案清單
+                // await showModifyList(allSiteCssList, 'modifyCssList');
+                updateEleValue({ cssMoveStatus: `<i class="fas fa-check-circle"></i> "${cssRange}"靜態版控CSS已搬至動態版控!` });
+            })();
+        });
+        // #endregion 樣式同步
     }
 });
 
@@ -239,6 +278,17 @@ function hasInputError(value) {
     }
 }
 
+// Filter Scss list 
+function filterScss(list) {
+    let newList = [];
+
+    newList = list.filter(v => {
+        return v.indexOf('.scss') === -1 || v.indexOf('.map') === -1;
+    });
+
+    return newList;
+}
+
 // Update Element value
 function updateEleValue(obj) {
     for (let key in obj) {
@@ -249,16 +299,18 @@ function updateEleValue(obj) {
 }
 
 // 顯示修改檔案清單
-function showModifyList(list) {
+function showModifyList(list, showPlace) {
     let listContent = [],
-        finalElement = '';
+        innerElement = '',
+        listObj = {};
 
     list.forEach(element => {
         listContent.push(`<li>${element}</li>`);
     });
 
-    finalElement = listContent.join('');
-    updateEleValue({ modifyList: `<ul>${finalElement}</ul>` });
+    innerElement = listContent.join('');
+    listObj[showPlace] = `<ul>${innerElement}</ul>`;
+    updateEleValue(listObj);
 }
 
 // 檢查 Dir 是否存在
@@ -355,7 +407,7 @@ function getFileHash(filePath) {
 }
 
 // 列出所有檔案
-function listAllFilePath(rootPath, isSiteNameDirMode) {
+function listAllFilePath(rootPath, isSiteNameDirMode, isCss) {
     return new Promise((resolve, reject) => {
 
         // 忽略清單
@@ -368,6 +420,10 @@ function listAllFilePath(rootPath, isSiteNameDirMode) {
             '!Cdn2Redirect',
             '!node_modules',
             '!fonts'];
+
+        if (isCss === true) {
+            ignoreFileList = ['*.css']
+        }
 
         // 參數設定
         let options = {

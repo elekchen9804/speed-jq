@@ -27,7 +27,6 @@ ul {
    float: right;
 }
 
-#theme-type label,
-#casino-type label {
+.btn-group-toggle label{
     cursor: pointer;
 }

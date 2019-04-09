@@ -126,12 +126,10 @@ $(function () {
                 // Dist to design  (scss/css/html/img)
                 await copyFile(modifySiteNameDistPath, designPath);
                 // Dist to program (only css and img)
-                try {
-                    fs.accessSync(path.join(modifySiteNameDistPath, 'Content'));
+                // 沒有任何樣式項目就不做
+                if (resultFileListWithoutScss.length !== 0) {
                     await exportDist(resultFileListWithoutScss, modifySiteNamePath, modifySiteNameDistPathWithoutScss);
                     await copyFile(path.join(modifySiteNameDistPathWithoutScss, 'Content'), path.join(programPath, 'Content'));
-                } catch (err) {
-                    console.log(err);
                 }
 
                 // 顯示檔案清單

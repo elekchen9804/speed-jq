@@ -119,7 +119,7 @@ $(function () {
                     return;
                 }
                 // 取得不含SCSS異動清單
-                let resultFileListWithoutScss = filterScss(resultFileList);
+                let resultFileListWithoutScss = await filterScss(resultFileList);
 
                 // 產出異動檔案包
                 await exportDist(resultFileList, modifySiteNamePath, modifySiteNameDistPath);
@@ -218,7 +218,7 @@ $(function () {
                     allSiteCssList = newCssList;
                 }
 
-                // 複製圖片至目標
+                // 複製CSS至目標
                 allSiteCssList.forEach(async l => {
                     let destProgramPath = path.join(programRootPath, l);
                     let destDesignPath = path.join(designRootPath, l);
@@ -280,13 +280,15 @@ function hasInputError(value) {
 
 // Filter Scss list 
 function filterScss(list) {
-    let newList = [];
+    return new Promise((resolve, reject) => {
+        let newList = [];
 
-    newList = list.filter(v => {
-        return v.indexOf('.scss') === -1 || v.indexOf('.map') === -1;
-    });
+        newList = list.filter(v => {
+            return v.indexOf('.scss') === -1 && v.indexOf('.map') === -1;
+        });
 
-    return newList;
+        resolve(newList);
+    })
 }
 
 // Update Element value

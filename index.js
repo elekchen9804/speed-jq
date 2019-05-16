@@ -208,13 +208,11 @@ $(function () {
                 // 取得所有站台CSS清單
                 let allSiteCssList = await listAllFilePath(designRootPath, false, true);
 
-                if (cssRange === 'Lobby') {
-                    let newCssList = allSiteCssList.filter(l => {
-                        return l.indexOf('Lobby') !== -1;
-                    });
+                let newCssList = allSiteCssList.filter(l => {
+                    return l.indexOf('Lobby') !== -1 && l.indexOf('_Common') === -1;
+                });
 
-                    allSiteCssList = newCssList;
-                }
+                allSiteCssList = newCssList;
 
                 // 複製CSS至目標
                 allSiteCssList.forEach(async l => {

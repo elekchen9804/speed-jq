@@ -199,17 +199,17 @@ $(function () {
         // CSS搬移
         $('#start-css-move').on('click', function () {
             // let cssRange = getRadioInput('css-range');
-            let cssRange = 'Lobby';
+            let cssRange = 'Lobby, Shared';
             let programRootPath = path.join(elemList.programPath, 'Web.Portal');
             let designRootPath = path.join(elemList.designPath, 'Portal');
 
             (async () => {
-                updateEleValue({ cssMoveStatus: `<i class="fa-spinner fa-spin"></i> 搬移CSS中...` });
+                updateEleValue({ cssMoveStatus: `<i class="fas fa-spinner fa-spin"></i> 搬移CSS中...` });
                 // 取得所有站台CSS清單
                 let allSiteCssList = await listAllFilePath(designRootPath, false, true);
 
                 let newCssList = allSiteCssList.filter(l => {
-                    return l.indexOf('Lobby') !== -1 && l.indexOf('_Common') === -1;
+                    return l.indexOf('Lobby') !== -1 || l.indexOf('Shared') !== -1 && l.indexOf('_Common') === -1;
                 });
 
                 allSiteCssList = newCssList;

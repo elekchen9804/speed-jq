@@ -209,7 +209,11 @@ $(function () {
                 let allSiteCssList = await listAllFilePath(designRootPath, false, true);
 
                 let newCssList = allSiteCssList.filter(l => {
-                    return l.indexOf('Lobby') !== -1 || l.indexOf('Shared') !== -1 && l.indexOf('_Common') === -1;
+                    if (l.indexOf('_Common') !== -1) {
+                        return false;
+                    } else {
+                        return l.indexOf('Lobby') !== -1 || l.indexOf('Shared') !== -1;
+                    }
                 });
 
                 allSiteCssList = newCssList;

@@ -21,7 +21,7 @@
   "homepage": "https://github.com/elekchen9804/speed-jq#readme",
   "devDependencies": {
     "devtron": "^1.4.0",
-    "electron": "^4.0.2",
+    "electron": "^7.2.4",
     "electron-builder": "^20.38.5"
   },
   "dependencies": {

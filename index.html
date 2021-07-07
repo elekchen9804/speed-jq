@@ -13,25 +13,21 @@
     <nav class="navbar navbar-dark bg-dark">
         <a class="navbar-brand" href="#"><i class="fas fa-rocket"></i> SPEED</a>
         <div class="nav" id="nav-tab" role="tablist">
-            <a class="nav-item nav-link active" id="nav-work-tab" data-toggle="tab" href="#nav-work" role="tab"
-                aria-controls="nav-work" aria-selected="true">站台修改</a>
-            <a class="nav-item nav-link" id="nav-img-tab" data-toggle="tab" href="#nav-img" role="tab"
+            <a class="nav-item nav-link active" id="nav-work-tab" data-toggle="tab" href="#nav-work-dev" role="tab"
+            aria-controls="nav-work" aria-selected="true">站台修改(Theme)</a>
+            <!-- <a class="nav-item nav-link" id="nav-img-tab" data-toggle="tab" href="#nav-img" role="tab"
                 aria-controls="nav-img" aria-selected="true">圖片批次</a>
             <a class="nav-item nav-link" id="nav-css-tab" data-toggle="tab" href="#nav-css-move" role="tab"
-                aria-controls="nav-css-move" aria-selected="true">樣式同步</a>
+                aria-controls="nav-css-move" aria-selected="true">樣式同步</a> -->
             <a class="nav-item nav-link" id="nav-setting-tab" data-toggle="tab" href="#nav-setting" role="tab"
                 aria-controls="nav-setting" aria-selected="false">
                 <i class="fas fa-cogs" data-toggle="tooltip" data-placement="bottom" title="設定"></i>
-            </a>
-            <a class="nav-item nav-link" id="nav-setting-tab" data-toggle="tab" href="#nav-log" role="tab"
-                aria-controls="nav-log" aria-selected="false">
-                <i class="fas fa-tasks" data-toggle="tooltip" data-placement="bottom" title="版本紀錄"></i>
             </a>
         </div>
     </nav>
     <div class="app-wrapper">
         <div class="tab-content" id="nav-tabContent">
-            <div class="tab-pane fade show active" id="nav-work" role="tabpanel" aria-labelledby="nav-work-tab">
+            <div class="tab-pane fade show active" id="nav-work-dev" role="tabpanel" aria-labelledby="nav-work-tab">
                 <section id="work">
                     <h4>站台修改</h4>
                     <hr>
@@ -39,7 +35,7 @@
                         <div class="form-group">
                             <label for="">輸入站代號 : </label>
                             <input type="text" id="site-name" class="form-control form-control-lg"
-                                placeholder="例：AN001-01">
+                                placeholder="例：PI001-01">
                         </div>
                         <div class="form-group">
                             <div id="theme-type" class="btn-group btn-group-toggle" data-toggle="buttons">
@@ -188,14 +184,14 @@
                     <h4>各區根目錄設定</h4>
                     <hr>
                     <ul class="list-group">
-                        <li class="design list-group-item row-item">
+                        <!-- <li class="design list-group-item row-item">
                             <label for=""><strong>Theme_Design(靜態版) : </strong></label>
                             <span data-bind="designPath"></span>
                             <button type="button" class="modify-btn btn btn-outline-dark" data-toggle="tooltip"
                                 data-placement="left" title="編輯">
                                 <i class="fas fa-pencil-alt"></i>
                             </button>
-                        </li>
+                        </li> -->
                         <!-- <li class="site list-group-item row-item">
                             <label for=""><strong>Theme_Site(網站) : </strong></label>
                             <span data-bind="sitePath"></span>
@@ -204,9 +200,17 @@
                                 <i class="fas fa-pencil-alt"></i>
                             </button>
                         </li> -->
-                        <li class="program list-group-item row-item">
-                            <label for=""><strong>Theme_Program(合作版控) : </strong></label>
-                            <span data-bind="programPath"></span>
+                        <li class="baseCode list-group-item row-item">
+                            <label for=""><strong>主程式位置 : </strong></label>
+                            <span data-bind="baseCodePath"></span>
+                            <button type="button" class="modify-btn btn btn-outline-dark" data-toggle="tooltip"
+                                data-placement="left" title="編輯">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                        </li>
+                        <li class="theme list-group-item row-item">
+                            <label for=""><strong>Theme版控位置 : </strong></label>
+                            <span data-bind="themePath"></span>
                             <button type="button" class="modify-btn btn btn-outline-dark" data-toggle="tooltip"
                                 data-placement="left" title="編輯">
                                 <i class="fas fa-pencil-alt"></i>
@@ -219,68 +223,6 @@
                                 data-placement="left" title="編輯">
                                 <i class="fas fa-pencil-alt"></i>
                             </button>
-                        </li>
-                    </ul>
-                </section>
-            </div>
-            <div class="tab-pane fade" id="nav-log" role="tabpanel" aria-labelledby="nav-log-tab">
-                <section id="log-list">
-                    <h4>版本紀錄</h4>
-                    <hr>
-                    <h5>目前版本</h5>
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                            <strong>1.0.5</strong>
-                            <a class="badge badge-success" data-toggle="collapse" href="#collapseLog" role="button"
-                                aria-expanded="false" aria-controls="collapseLog">
-                                查看新功能
-                            </a>
-                        </li>
-                    </ul>
-                    <div class="collapse" id="collapseLog">
-                        <div class="card card-body">
-                            <ul>
-                                <li>樣式同步功能: 同步範圍加上Shared資料夾底下css</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <br />
-                    <h5>
-                        歷史版本
-                        <a class="btn btn-link" data-toggle="collapse" href="#collapseHistoryLog" role="button"
-                            aria-expanded="false" aria-controls="collapseLog">
-                            查看
-                        </a>
-                    </h5>
-                    <div class="collapse" id="collapseHistoryLog">
-                        <div class="card card-body">
-                            <strong>1.0.4</strong>
-                            <ul>
-                                <li>新增SCSS檔案過濾功能 (Scss不會進Theme_Program)</li>
-                                <li>新增樣式同步 (將靜態版Lobby中的CSS搬至動態版)</li>
-                            </ul>
-                            <strong>1.0.3</strong>
-                            <ul>
-                                <li>新增功能 : 娛樂城圖片批次搬運</li>
-                            </ul>
-                            <strong>1.0.2</strong>
-                            <ul>
-                                <li>取消搬移檔案到 Theme_Site(網站) 資料夾</li>
-                            </ul>
-                            <strong>1.0.1</strong>
-                            <ul>
-                                <li>可以選擇Portal/Mobile</li>
-                                <li>輸入框加上格式檢查(是否為空、格式錯誤、不存在資料夾)</li>
-                                <li>錯誤訊息更新(格式錯誤、不存在資料夾等)</li>
-                                <li>顯示異動檔案清單</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <br />
-                    <h5>即將推出</h5>
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                            設定路徑完後無需重啟即可生效
                         </li>
                     </ul>
                 </section>

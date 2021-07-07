@@ -16,9 +16,8 @@ $(function () {
         setting = getSetting();
 
         let elemList = {
-            designPath: setting.path.design.pathDir,
-            programPath: setting.path.program.pathDir,
-            // sitePath: setting.path.site.pathDir,
+            baseCodePath: setting.path.baseCode.pathDir,
+            themePath: setting.path.theme.pathDir,
             modifyPath: setting.path.modify.pathDir
         };
 
@@ -42,43 +41,53 @@ $(function () {
         });
         // #endregion 路徑設定
 
-        // #region 修改監控
+         // #region 站台修改(Theme)
         // 建立工作區：複製靜態版至Ｍodify, 建立備份檔
         $('#start-work').on('click', function () {
-            let userInput = getSiteInput();
+            const userInput = getSiteInput();
 
             // 格式檢查
             if (hasInputError(userInput)) {
                 return;
             }
 
-            let designPath = path.join(elemList.designPath, userInput.type, `${userInput.siteName}.${userInput.type}`);
-            let designCommonPath = path.join(elemList.designPath, userInput.type, '_Common');
-            let modifySiteNamePath = path.join(elemList.modifyPath, `${userInput.siteName}.${userInput.type}`);
-            let modifySiteNameBackupPath = path.join(elemList.modifyPath, 'Backup');
-            let modifySiteNameCommonPath = path.join(elemList.modifyPath, '_Common');
+            // 站代號
+            const targetSiteName = `${userInput.siteName}.${userInput.type}`;
+            // 主程式(Portal/Mobile)路徑
+            const baseCodePath = path.join(elemList.baseCodePath, `GPK.Web.${userInput.type}`);
+            // 對應代號 Theme 路徑
+            const themeSiteNamePath = path.join(elemList.themePath, userInput.type, targetSiteName);
+            // 工作區路徑
+            const modifyPath = elemList.modifyPath;
+            // 備份檔案路徑
+            const modifyBackupPath = path.join(elemList.baseCodePath, 'Modify_Backup');
 
             (async () => {
-                const targetSiteName = `${userInput.siteName}.${userInput.type}`;
                 // 目標資夾是否存在
                 try {
-                    await dirExist(designPath);
+                    await dirExist(themeSiteNamePath);
                 } catch (err) {
                     updateEleValue({ workStatus: `<i class="fas fa-exclamation-triangle"></i> ${targetSiteName} 不存在！` });
                     return;
                 }
-                updateEleValue({ workStatus: `<i class="fas fa-spinner fa-spin"></i> ${targetSiteName} 努力搬運中...` });
+                updateEleValue({ workStatus: `<i class="fas fa-spinner fa-spin"></i> 建立 ${targetSiteName} 工作區：努力搬運中...` });
                 // 清空檔案清單
                 updateEleValue({ modifyList: '' });
                 // 清空工作區
-                await clearDir(elemList.modifyPath);
-                // 複製靜態站到工作區
-                await copyFile(designPath, modifySiteNamePath);
-                // 複製靜態站_Common到工作區
-                await copyFile(designCommonPath, modifySiteNameCommonPath);
+                updateEleValue({ workStatus: `<i class="fas fa-spinner fa-spin"></i> 建立 ${targetSiteName} 工作區：清空 Modify...` });
+                await clearDir(modifyPath);
+                await clearDir(modifyBackupPath);
+                // 複製主程式到工作區
+                updateEleValue({ workStatus: `<i class="fas fa-spinner fa-spin"></i> 建立 ${targetSiteName} 工作區：複製主程式到工作區...` });
+                await copyFile(baseCodePath, modifyPath);
+                // 複製 Theme 到工作區
+                updateEleValue({ workStatus: `<i class="fas fa-spinner fa-spin"></i>  建立 ${targetSiteName} 工作區：複製 Theme 到工作區...` });
+                await copyFile(themeSiteNamePath, modifyPath);
                 // 產生備份檔
-                await copyFile(designPath, modifySiteNameBackupPath);
-                updateEleValue({ workStatus: `<i class="far fa-check-circle"></i> ${targetSiteName} 完成搬運與備份！` });
+                updateEleValue({ workStatus: `<i class="fas fa-spinner fa-spin"></i>  建立 ${targetSiteName} 工作區：產生備份檔...` });
+                await copyFile(modifyPath, modifyBackupPath);
+
+                updateEleValue({ workStatus: `<i class="far fa-check-circle"></i> 建立 ${targetSiteName} 工作區：完成！` });
             })()
         });
 
@@ -91,146 +100,145 @@ $(function () {
                 return
             }
 
-            let designPath = path.join(elemList.designPath, userInput.type, `${userInput.siteName}.${userInput.type}`);
-            // let sitePath = path.join(elemList.sitePath, userInput.type, `${userInput.siteName}.${userInput.type}`);
-            let programPath = path.join(elemList.programPath, `Web.${userInput.type}`, `${userInput.siteName}.${userInput.type}`);
-            let modifySiteNamePath = path.join(elemList.modifyPath, `${userInput.siteName}.${userInput.type}`);
-            let modifySiteNameBackupPath = path.join(elemList.modifyPath, 'Backup');
-            let modifySiteNameDistPath = path.join(elemList.modifyPath, 'Dist');
-            let modifySiteNameDistPathWithoutScss = path.join(elemList.modifyPath, 'Dist_No_Scss');
+            // 站代號
+            const targetSiteName = `${userInput.siteName}.${userInput.type}`;
+            // 對應代號 Theme 路徑
+            const themeSiteNamePath = path.join(elemList.themePath, userInput.type, targetSiteName);
+            // 工作區路徑
+            const modifyPath = elemList.modifyPath;
+            // 備份檔案路徑
+            const modifyBackupPath = path.join(elemList.baseCodePath, 'Modify_Backup');
+            // 比對差異檔案包路徑
+            const modifyDistPath = path.join(elemList.baseCodePath, 'Modify_Dist');
 
             (async () => {
-                const targetSiteName = `${userInput.siteName}.${userInput.type}`;
-
                 try {
-                    await dirExist(designPath);
+                    await dirExist(themeSiteNamePath);
                 } catch (err) {
                     updateEleValue({ workStatus: `<i class="fas fa-exclamation-triangle"></i> ${targetSiteName} 不存在！` });
                     return;
                 }
+                
+                // 清空 Modify_Dist
+                await clearDir(modifyDistPath);
 
-                updateEleValue({ workStatus: `<i class="fas fa-spinner fa-spin"></i> ${targetSiteName} 複製檔案至版控中...` });
+                updateEleValue({ workStatus: `<i class="fas fa-spinner fa-spin"></i> ${targetSiteName} 辨識異動檔案中...` });
                 // 取得所有檔案清單
-                let allModifyFileList = await listAllFilePath(modifySiteNamePath);
+                const allModifyFileList = await listAllFilePath(modifyPath);
                 // 取得異動檔案清單
-                let resultFileList = listModifyFilePath(allModifyFileList, modifySiteNamePath, modifySiteNameBackupPath);
+                const resultFileList = listModifyFilePath(allModifyFileList, modifyPath, modifyBackupPath);
+                
                 if (resultFileList.length === 0) {
                     updateEleValue({ workStatus: `<i class="fas fa-exclamation-triangle"></i> ${targetSiteName} 沒有異動檔案！` });
                     return;
                 }
-                // 取得不含SCSS異動清單
-                let resultFileListWithoutScss = await filterScss(resultFileList);
-
+                
                 // 產出異動檔案包
-                await exportDist(resultFileList, modifySiteNamePath, modifySiteNameDistPath);
-                // Dist to design  (scss/css/html/img)
-                await copyFile(modifySiteNameDistPath, designPath);
-                // Dist to program (only css and img)
-                // 沒有任何樣式項目就不做
-                if (resultFileListWithoutScss.length !== 0) {
-                    await exportDist(resultFileListWithoutScss, modifySiteNamePath, modifySiteNameDistPathWithoutScss);
-                    await copyFile(path.join(modifySiteNameDistPathWithoutScss, 'Content'), path.join(programPath, 'Content'));
-                }
+                updateEleValue({ workStatus: `<i class="fas fa-spinner fa-spin"></i> ${targetSiteName} 產出異動檔案包...` });
+                await exportDist(resultFileList, modifyPath, modifyDistPath);
+                // 複製差異檔案到 Theme
+                updateEleValue({ workStatus: `<i class="fas fa-spinner fa-spin"></i> ${targetSiteName} 複製檔案至版控中...` });
+                await copyFile(modifyDistPath, themeSiteNamePath);
+               
 
                 // 顯示檔案清單
                 await showModifyList(resultFileList, 'modifyList');
                 updateEleValue({ workStatus: `<i class="far fa-check-circle"></i> ${targetSiteName} 檔案已成功搬至版控！` });
             })();
         });
-        // #endregion 修改監控
+        // #endregion 站台修改(Theme)
 
         // #region 圖片搬移
-
         // 準備空資料夾
-        $('#start-img-move').on('click', function () {
+        // $('#start-img-move').on('click', function () {
 
-            let casinoType = getRadioInput('casino-types');
+        //     let casinoType = getRadioInput('casino-types');
 
-            let programRootPath = path.join(elemList.programPath, 'Web.Portal');
-            let designRootPath = path.join(elemList.designPath, 'Portal');
+        //     let programRootPath = path.join(elemList.themePath, 'Web.Portal');
+        //     let designRootPath = path.join(elemList.designPath, 'Portal');
 
-            let modifyRootPath = elemList.modifyPath;
+        //     let modifyRootPath = elemList.modifyPath;
 
-            (async () => {
-                updateEleValue({ imgMoveStatus: `<i class="fa-spinner fa-spin"></i> 準備環境中...` });
-                // 取得所有站台清單
-                let programSiteList = await listAllFilePath(programRootPath, true);
-                let designSiteList = await listAllFilePath(designRootPath, true);
+        //     (async () => {
+        //         updateEleValue({ imgMoveStatus: `<i class="fa-spinner fa-spin"></i> 準備環境中...` });
+        //         // 取得所有站台清單
+        //         let programSiteList = await listAllFilePath(programRootPath, true);
+        //         let designSiteList = await listAllFilePath(designRootPath, true);
 
-                // 清空工作區
-                await clearDir(elemList.modifyPath);
-                // 建立站台空資料夾
-                await createDir(modifyRootPath, programSiteList);
-                updateEleValue({ imgMoveStatus: `<i class="fas fa-check-circle"></i> "${casinoType}"資料夾已完成!` });
-            })();
-        });
+        //         // 清空工作區
+        //         await clearDir(elemList.modifyPath);
+        //         // 建立站台空資料夾
+        //         await createDir(modifyRootPath, programSiteList);
+        //         updateEleValue({ imgMoveStatus: `<i class="fas fa-check-circle"></i> "${casinoType}"資料夾已完成!` });
+        //     })();
+        // });
 
         // 批次搬移圖片
-        $('#finish-img-move').on('click', function () {
+        // $('#finish-img-move').on('click', function () {
 
-            let casinoType = getRadioInput('casino-types');
-            let targetCasinoPath = path.join('Content', 'Views', 'Lobby', casinoType);
-            let programRootPath = path.join(elemList.programPath, 'Web.Portal');
-            let designRootPath = path.join(elemList.designPath, 'Portal');
-            let modifyRootPath = elemList.modifyPath;
+        //     let casinoType = getRadioInput('casino-types');
+        //     let targetCasinoPath = path.join('Content', 'Views', 'Lobby', casinoType);
+        //     let programRootPath = path.join(elemList.themePath, 'Web.Portal');
+        //     let designRootPath = path.join(elemList.designPath, 'Portal');
+        //     let modifyRootPath = elemList.modifyPath;
 
-            (async () => {
-                updateEleValue({ imgMoveStatus: `<i class="fa-spinner fa-spin"></i> 搬移圖片中...` });
-                // 取得所有站台清單
-                let allSiteList = await listAllFilePath(modifyRootPath, true);
+        //     (async () => {
+        //         updateEleValue({ imgMoveStatus: `<i class="fa-spinner fa-spin"></i> 搬移圖片中...` });
+        //         // 取得所有站台清單
+        //         let allSiteList = await listAllFilePath(modifyRootPath, true);
 
-                // 複製圖片至目標
-                allSiteList.forEach(async l => {
-                    let srcPath = path.join(modifyRootPath, l);
-                    let destProgramPath = path.join(programRootPath, l, targetCasinoPath);
-                    let destDesignPath = path.join(designRootPath, l, targetCasinoPath);
+        //         // 複製圖片至目標
+        //         allSiteList.forEach(async l => {
+        //             let srcPath = path.join(modifyRootPath, l);
+        //             let destthemePath = path.join(programRootPath, l, targetCasinoPath);
+        //             let destDesignPath = path.join(designRootPath, l, targetCasinoPath);
 
-                    await copyFile(srcPath, destProgramPath);
-                    await copyFile(srcPath, destDesignPath);
-                });
+        //             await copyFile(srcPath, destthemePath);
+        //             await copyFile(srcPath, destDesignPath);
+        //         });
 
-                updateEleValue({ imgMoveStatus: `<i class="fas fa-check-circle"></i> "${casinoType}"圖片已搬移至靜態與動態版控` });
+        //         updateEleValue({ imgMoveStatus: `<i class="fas fa-check-circle"></i> "${casinoType}"圖片已搬移至靜態與動態版控` });
 
-            })();
-        });
+        //     })();
+        // });
         // #endregion 圖片搬移
 
         // #region 樣式同步
         // CSS搬移
-        $('#start-css-move').on('click', function () {
-            // let cssRange = getRadioInput('css-range');
-            let cssRange = 'Lobby, Shared';
-            let programRootPath = path.join(elemList.programPath, 'Web.Portal');
-            let designRootPath = path.join(elemList.designPath, 'Portal');
+        // $('#start-css-move').on('click', function () {
+        //     // let cssRange = getRadioInput('css-range');
+        //     let cssRange = 'Lobby, Shared';
+        //     let programRootPath = path.join(elemList.themePath, 'Web.Portal');
+        //     let designRootPath = path.join(elemList.designPath, 'Portal');
 
-            (async () => {
-                updateEleValue({ cssMoveStatus: `<i class="fas fa-spinner fa-spin"></i> 搬移CSS中...` });
-                // 取得所有站台CSS清單
-                let allSiteCssList = await listAllFilePath(designRootPath, false, true);
+        //     (async () => {
+        //         updateEleValue({ cssMoveStatus: `<i class="fas fa-spinner fa-spin"></i> 搬移CSS中...` });
+        //         // 取得所有站台CSS清單
+        //         let allSiteCssList = await listAllFilePath(designRootPath, false, true);
 
-                let newCssList = allSiteCssList.filter(l => {
-                    if (l.indexOf('_Common') !== -1) {
-                        return false;
-                    } else {
-                        return l.indexOf('Lobby') !== -1 || l.indexOf('Shared') !== -1;
-                    }
-                });
+        //         let newCssList = allSiteCssList.filter(l => {
+        //             if (l.indexOf('_Common') !== -1) {
+        //                 return false;
+        //             } else {
+        //                 return l.indexOf('Lobby') !== -1 || l.indexOf('Shared') !== -1;
+        //             }
+        //         });
 
-                allSiteCssList = newCssList;
+        //         allSiteCssList = newCssList;
 
-                // 複製CSS至目標
-                allSiteCssList.forEach(async l => {
-                    let destProgramPath = path.join(programRootPath, l);
-                    let destDesignPath = path.join(designRootPath, l);
+        //         // 複製CSS至目標
+        //         allSiteCssList.forEach(async l => {
+        //             let destthemePath = path.join(programRootPath, l);
+        //             let destDesignPath = path.join(designRootPath, l);
 
-                    await copyFile(destDesignPath, destProgramPath);
-                });
+        //             await copyFile(destDesignPath, destthemePath);
+        //         });
 
-                // 顯示檔案清單
-                // await showModifyList(allSiteCssList, 'modifyCssList');
-                updateEleValue({ cssMoveStatus: `<i class="fas fa-check-circle"></i> "${cssRange}"靜態版控CSS已搬至動態版控!` });
-            })();
-        });
+        //         // 顯示檔案清單
+        //         // await showModifyList(allSiteCssList, 'modifyCssList');
+        //         updateEleValue({ cssMoveStatus: `<i class="fas fa-check-circle"></i> "${cssRange}"靜態版控CSS已搬至動態版控!` });
+        //     })();
+        // });
         // #endregion 樣式同步
     }
 });
